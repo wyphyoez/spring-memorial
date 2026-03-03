@@ -14,14 +14,14 @@ export type Hero = {
 export const HEROES: Hero[] = [
   {
     id: '1',
-    name: 'Goallay',
-    slug: 'goallay',
-    role: 'Student',
-    unit: 'Armed Force',
-    unitSlug: 'armedforce',
-    location: 'Yangon',
+    name: 'Kyaw Thu',
+    slug: 'kyawthu',
+    role: 'PDF/EAO',
+    unit: 'Arakan Army',
+    unitSlug: 'arakanarmy',
+    location: 'Rakhine',
     date: '2021-03-14',
-    desc: 'A courageous youth who stood for freedom and community protection in a time of fear.',
+    desc: 'Remembered for his bravery, compassion, and commitment to protecting civilians during conflict.',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80'
   },
   {
@@ -76,5 +76,5 @@ export function roleToSlug(role: Hero['role']) {
 }
 
 export function heroHref(hero: Hero) {
-  return `/${roleToSlug(hero.role)}/${hero.unitSlug}/${hero.slug}`;
+  return `/${hero.unitSlug}/${hero.slug}`;
 }
