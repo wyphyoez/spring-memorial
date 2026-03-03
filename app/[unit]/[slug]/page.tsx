@@ -6,9 +6,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, Flower2, MapPin, MessageCircle, Shield } from 'lucide-react';
 import { HEROES } from '@/lib/data';
+import { readAuthUser } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 type HeroState = { salute: number; flower: number; commentCount: number; saluted: boolean; flowered: boolean };
 type HeroComments = Record<string, string[]>;
@@ -26,14 +26,12 @@ export default function HeroDetailPage() {
   const [comments, setComments] = useState<HeroComments>({});
   const [username, setUsername] = useState('');
   const [text, setText] = useState('');
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [tempName, setTempName] = useState('');
 
   useEffect(() => {
     setMounted(true);
     const savedStats = localStorage.getItem('spring-memorial-stats');
     const savedComments = localStorage.getItem('spring-memorial-comments');
-    const savedUser = localStorage.getItem('spring-memorial-user');
+    const savedUser = readAuthUser()?.identity;
     if (savedStats) setHeroStats(JSON.parse(savedStats));
     if (savedComments) setComments(JSON.parse(savedComments));
     if (savedUser) setUsername(savedUser);
@@ -151,31 +149,9 @@ export default function HeroDetailPage() {
 
           <div className="mt-3">
             {!username ? (
-              <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
-                <DialogTrigger asChild>
-                  <Button>Login to comment</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Login</DialogTitle>
-                    <DialogDescription>Enter your name to leave a comment.</DialogDescription>
-                  </DialogHeader>
-                  <Input value={tempName} onChange={(e) => setTempName(e.target.value)} placeholder="Your name" />
-                  <Button
-                    className="mt-2"
-                    onClick={() => {
-                      if (!tempName.trim()) return;
-                      const name = tempName.trim();
-                      setUsername(name);
-                      localStorage.setItem('spring-memorial-user', name);
-                      setTempName('');
-                      setLoginOpen(false);
-                    }}
-                  >
-                    Continue
-                  </Button>
-                </DialogContent>
-              </Dialog>
+              <Link href="/auth">
+                <Button>Login to comment</Button>
+              </Link>
             ) : (
               <div className="flex gap-2">
                 <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Write a respectful message..." />

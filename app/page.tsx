@@ -4,8 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Flower2, Globe, MapPin, MessageCircle, Search, Settings, Shield, Sun, Moon, User } from 'lucide-react';
+import { Flower2, Globe, LogIn, MapPin, MessageCircle, Search, Settings, Shield, Sun, Moon, User } from 'lucide-react';
 import { HEROES, LANGUAGES, QUOTES, heroHref, type Hero } from '@/lib/data';
+import { clearAuthUser, readAuthUser } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +31,7 @@ export default function Page() {
     setMounted(true);
     setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
     const savedStats = localStorage.getItem('spring-memorial-stats');
-    const savedUser = localStorage.getItem('spring-memorial-user');
+    const savedUser = readAuthUser()?.identity;
     const savedLanguage = localStorage.getItem('spring-memorial-language');
     if (savedStats) setHeroStats(JSON.parse(savedStats));
     if (savedUser) setUsername(savedUser);
@@ -97,7 +98,7 @@ export default function Page() {
         onLanguage={setLanguage}
         onLogout={() => {
           setUsername('');
-          localStorage.removeItem('spring-memorial-user');
+          clearAuthUser();
         }}
       />
     </main>
@@ -144,6 +145,11 @@ function TopNav({
               ))}
             </select>
           </div>
+          <Link href="/auth">
+            <Button variant="ghost" size="icon" aria-label="Go to auth page">
+              <LogIn className="h-5 w-5" />
+            </Button>
+          </Link>
           <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)}>
             <Settings className="h-5 w-5" />
           </Button>
