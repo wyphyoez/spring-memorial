@@ -4,7 +4,21 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Flower2, Globe, LogIn, MapPin, MessageCircle, Search, Settings, Shield, Sun, Moon, User } from 'lucide-react';
+import {
+  ChevronRight,
+  Flower2,
+  Globe,
+  LogIn,
+  MapPin,
+  MessageCircle,
+  Search,
+  Settings,
+  Shield,
+  Sun,
+  Moon,
+  User,
+  BadgeCheck
+} from 'lucide-react';
 import { HEROES, LANGUAGES, QUOTES, heroHref, type Hero } from '@/lib/data';
 import { clearAuthUser, readAuthUser } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -59,7 +73,7 @@ export default function Page() {
   if (!mounted) return null;
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background">
       <TopNav
         search={search}
         setSearch={setSearch}
@@ -69,24 +83,36 @@ export default function Page() {
         setLanguage={setLanguage}
       />
 
-      <section className="mx-auto max-w-7xl px-4 pb-8 pt-4 md:px-6">
-        <div className="mb-4 rounded-2xl border border-border bg-gradient-to-br from-primary/10 to-background p-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Daily Quote</p>
-          <p className="mt-1 text-sm md:text-base">“{quote}”</p>
-        </div>
+      <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-10 pt-4 md:grid-cols-[320px_1fr] md:px-6">
+        <aside className="space-y-4 md:sticky md:top-20 md:self-start">
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Today&apos;s Memory Quote</p>
+            <p className="mt-2 text-sm leading-relaxed">“{quote}”</p>
+          </div>
 
-        <div className="mb-4 flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
-          {roleFilters.map((role) => (
-            <Button key={role} variant={filter === role ? 'default' : 'outline'} size="sm" onClick={() => setFilter(role)}>
-              {role}
-            </Button>
-          ))}
-        </div>
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <p className="mb-2 text-sm font-semibold">Filter by Role</p>
+            <div className="flex flex-wrap gap-2">
+              {roleFilters.map((role) => (
+                <Button key={role} variant={filter === role ? 'default' : 'outline'} size="sm" onClick={() => setFilter(role)}>
+                  {role}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </aside>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredHeroes.map((hero) => (
-            <HeroCard key={hero.id} hero={hero} stats={heroStats[hero.id]} />
-          ))}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Fallen Heroes</h2>
+            <p className="text-xs text-muted-foreground">{filteredHeroes.length} remembered</p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {filteredHeroes.map((hero) => (
+              <HeroListCard key={hero.id} hero={hero} stats={heroStats[hero.id]} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -127,17 +153,13 @@ function TopNav({
         <div className="hidden max-w-md flex-1 md:block">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input className="pl-9" placeholder="Search hero or location..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <Input className="pl-9" placeholder="Search hero, location or unit..." value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 rounded-lg border border-border px-2 py-1">
+          <div className="hidden items-center gap-1 rounded-lg border border-border px-2 py-1 md:flex">
             <Globe className="h-4 w-4 text-muted-foreground" />
-            <select
-              className="bg-transparent text-xs outline-none"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
+            <select className="bg-transparent text-xs outline-none" value={language} onChange={(e) => setLanguage(e.target.value)}>
               {LANGUAGES.map((lang) => (
                 <option key={lang} value={lang}>
                   {lang}
@@ -146,8 +168,9 @@ function TopNav({
             </select>
           </div>
           <Link href="/auth">
-            <Button variant="ghost" size="icon" aria-label="Go to auth page">
-              <LogIn className="h-5 w-5" />
+            <Button size="sm" variant={username ? 'outline' : 'default'}>
+              <LogIn className="h-4 w-4" />
+              {username ? username : 'Login'}
             </Button>
           </Link>
           <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)}>
@@ -158,10 +181,20 @@ function TopNav({
           </Avatar>
         </div>
       </div>
-      <div className="px-4 pb-3 md:hidden">
+      <div className="space-y-2 px-4 pb-3 md:hidden">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input className="pl-9" placeholder="Search hero or location..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input className="pl-9" placeholder="Search hero, location or unit..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <div className="flex items-center gap-1 rounded-lg border border-border px-2 py-1">
+          <Globe className="h-4 w-4 text-muted-foreground" />
+          <select className="w-full bg-transparent text-xs outline-none" value={language} onChange={(e) => setLanguage(e.target.value)}>
+            {LANGUAGES.map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </header>
@@ -180,16 +213,22 @@ function Logo() {
   );
 }
 
-function HeroCard({ hero, stats }: { hero: Hero; stats?: HeroState }) {
+function HeroListCard({ hero, stats }: { hero: Hero; stats?: HeroState }) {
   const state = stats ?? { salute: 0, flower: 0, commentCount: 0, saluted: false, flowered: false };
   return (
-    <Link href={heroHref(hero)} className="overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm transition hover:-translate-y-0.5">
+    <Link href={heroHref(hero)} className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       <div className="relative h-44 w-full">
-        <Image src={hero.image} alt={hero.name} fill className="object-cover" />
+        <Image src={hero.image} alt={hero.name} fill className="object-cover transition group-hover:scale-[1.03]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute bottom-0 w-full p-3 text-white">
+          <Badge variant="secondary" className="mb-2 border-0 bg-white/20 text-white backdrop-blur">
+            {hero.role}
+          </Badge>
+          <h3 className="line-clamp-1 text-lg font-semibold">{hero.name}</h3>
+        </div>
       </div>
+
       <div className="space-y-2 p-4">
-        <Badge variant="secondary">{hero.role}</Badge>
-        <h3 className="text-lg font-semibold">{hero.name}</h3>
         <p className="flex items-center gap-1 text-sm text-muted-foreground">
           <Shield className="h-4 w-4" />
           {hero.unit}
@@ -198,15 +237,15 @@ function HeroCard({ hero, stats }: { hero: Hero; stats?: HeroState }) {
           <MapPin className="h-4 w-4" />
           {hero.location}
         </p>
-        <div className="flex gap-2 pt-1">
-          <Button size="sm" variant="outline" className="pointer-events-none">
-            <span>🫡</span>
-            {state.salute}
-          </Button>
-          <Button size="sm" variant="outline" className="pointer-events-none">
-            <MessageCircle className="h-4 w-4" />
-            {state.commentCount}
-          </Button>
+
+        <div className="flex items-center justify-between pt-1">
+          <div className="flex gap-2 text-xs text-muted-foreground">
+            <span>🫡 {state.salute}</span>
+            <span>💬 {state.commentCount}</span>
+          </div>
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-primary">
+            Open <ChevronRight className="h-3.5 w-3.5" />
+          </span>
         </div>
       </div>
     </Link>
@@ -232,24 +271,38 @@ function SettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Mobile-first memorial experience preferences.</DialogDescription>
+          <DialogDescription>Manage your memorial preferences and account access.</DialogDescription>
         </DialogHeader>
+
         <div className="space-y-5 text-sm">
-          <div>
+          <div className="rounded-xl border border-border p-3">
             <p className="mb-2 font-semibold">Account</p>
-            <p className="mb-2 text-muted-foreground">{username ? `Signed in as ${username}` : 'Not logged in'}</p>
-            {username && (
-              <Button variant="outline" onClick={onLogout}>
-                Logout
-              </Button>
+            {username ? (
+              <div className="flex items-center justify-between gap-2">
+                <p className="inline-flex items-center gap-1 text-muted-foreground">
+                  <BadgeCheck className="h-4 w-4 text-primary" />
+                  Signed in as {username}
+                </p>
+                <Button variant="outline" size="sm" onClick={onLogout}>
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Link href="/auth" onClick={() => onOpenChange(false)}>
+                <Button className="w-full">
+                  <LogIn className="h-4 w-4" />
+                  Login to your account
+                </Button>
+              </Link>
             )}
           </div>
-          <div>
+
+          <div className="rounded-xl border border-border p-3">
             <p className="mb-2 font-semibold">Theme</p>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <Button variant={theme === 'light' ? 'default' : 'outline'} onClick={() => setTheme('light')}>
                 <Sun className="h-4 w-4" />Light
               </Button>
@@ -258,7 +311,8 @@ function SettingsDialog({
               </Button>
             </div>
           </div>
-          <div>
+
+          <div className="rounded-xl border border-border p-3">
             <p className="mb-2 font-semibold">Language</p>
             <div className="flex flex-wrap gap-2">
               {LANGUAGES.map((lang) => (

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Flower2, MapPin, MessageCircle, Shield } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Flower2, MapPin, MessageCircle, Shield, UserCircle2 } from 'lucide-react';
 import { HEROES } from '@/lib/data';
 import { readAuthUser } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -16,10 +16,7 @@ type HeroComments = Record<string, string[]>;
 export default function HeroDetailPage() {
   const params = useParams<{ unit: string; slug: string }>();
 
-  const hero = useMemo(
-    () => HEROES.find((h) => h.slug === params.slug && h.unitSlug === params.unit),
-    [params.slug, params.unit]
-  );
+  const hero = useMemo(() => HEROES.find((h) => h.slug === params.slug && h.unitSlug === params.unit), [params.slug, params.unit]);
 
   const [mounted, setMounted] = useState(false);
   const [heroStats, setHeroStats] = useState<Record<string, HeroState>>({});
@@ -62,7 +59,7 @@ export default function HeroDetailPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-primary/10 via-background to-background">
-      <section className="mx-auto max-w-3xl px-4 pb-10 pt-5 md:px-6">
+      <section className="mx-auto max-w-5xl px-4 pb-10 pt-5 md:px-6">
         <div className="mb-4 flex items-center justify-between">
           <Link href="/">
             <Button size="icon" variant="outline">
@@ -76,59 +73,69 @@ export default function HeroDetailPage() {
         </div>
 
         <article className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
-          <div className="relative h-64 w-full md:h-80">
-            <Image src={hero.image} alt={hero.name} fill className="object-cover" />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
-              <p className="text-xs uppercase tracking-widest opacity-80">{hero.unit}</p>
-              <h1 className="text-2xl font-semibold">{hero.name}</h1>
-            </div>
-          </div>
-
-          <div className="space-y-4 p-4 md:p-5">
-            <p className="text-sm text-muted-foreground">{hero.role} • {hero.date}</p>
-            <p className="leading-relaxed text-sm text-foreground/90">{hero.desc}</p>
-            <div className="grid gap-2 text-sm text-muted-foreground">
-              <p className="flex items-center gap-2"><Shield className="h-4 w-4" /> Served Unit: {hero.unit}</p>
-              <p className="flex items-center gap-2"><MapPin className="h-4 w-4" /> Location: {hero.location}</p>
+          <div className="grid md:grid-cols-[1.1fr_1fr]">
+            <div className="relative h-64 md:h-full min-h-80">
+              <Image src={hero.image} alt={hero.name} fill className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent md:bg-gradient-to-r" />
+              <div className="absolute bottom-0 w-full p-5 text-white">
+                <p className="text-xs uppercase tracking-widest opacity-80">{hero.unit}</p>
+                <h1 className="text-3xl font-semibold">{hero.name}</h1>
+                <p className="text-sm opacity-90">{hero.role}</p>
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-1">
-              <Button
-                variant={state.saluted ? 'default' : 'outline'}
-                onClick={() =>
-                  setHeroStats((prev) => {
-                    const current = prev[hero.id] ?? state;
-                    return {
-                      ...prev,
-                      [hero.id]: {
-                        ...current,
-                        saluted: !current.saluted,
-                        salute: Math.max(0, current.salute + (current.saluted ? -1 : 1))
-                      }
-                    };
-                  })
-                }
-              >
-                🫡 Salute ({state.salute})
-              </Button>
-              <Button
-                variant={state.flowered ? 'default' : 'outline'}
-                onClick={() =>
-                  setHeroStats((prev) => {
-                    const current = prev[hero.id] ?? state;
-                    return {
-                      ...prev,
-                      [hero.id]: {
-                        ...current,
-                        flowered: !current.flowered,
-                        flower: Math.max(0, current.flower + (current.flowered ? -1 : 1))
-                      }
-                    };
-                  })
-                }
-              >
-                🌸 Offer Flower ({state.flower})
-              </Button>
+            <div className="space-y-4 p-5">
+              <p className="leading-relaxed text-sm text-foreground/90">{hero.desc}</p>
+              <div className="grid gap-2 text-sm text-muted-foreground">
+                <p className="flex items-center gap-2">
+                  <Shield className="h-4 w-4" /> Served Unit: {hero.unit}
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" /> Location: {hero.location}
+                </p>
+                <p className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4" /> Date: {hero.date}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button
+                  variant={state.saluted ? 'default' : 'outline'}
+                  onClick={() =>
+                    setHeroStats((prev) => {
+                      const current = prev[hero.id] ?? state;
+                      return {
+                        ...prev,
+                        [hero.id]: {
+                          ...current,
+                          saluted: !current.saluted,
+                          salute: Math.max(0, current.salute + (current.saluted ? -1 : 1))
+                        }
+                      };
+                    })
+                  }
+                >
+                  🫡 Salute ({state.salute})
+                </Button>
+                <Button
+                  variant={state.flowered ? 'default' : 'outline'}
+                  onClick={() =>
+                    setHeroStats((prev) => {
+                      const current = prev[hero.id] ?? state;
+                      return {
+                        ...prev,
+                        [hero.id]: {
+                          ...current,
+                          flowered: !current.flowered,
+                          flower: Math.max(0, current.flower + (current.flowered ? -1 : 1))
+                        }
+                      };
+                    })
+                  }
+                >
+                  🌸 Offer Flower ({state.flower})
+                </Button>
+              </div>
             </div>
           </div>
         </article>
@@ -150,7 +157,10 @@ export default function HeroDetailPage() {
           <div className="mt-3">
             {!username ? (
               <Link href="/auth">
-                <Button>Login to comment</Button>
+                <Button>
+                  <UserCircle2 className="h-4 w-4" />
+                  Login to comment
+                </Button>
               </Link>
             ) : (
               <div className="flex gap-2">
