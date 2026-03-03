@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { ArrowLeft, Flower2, MapPin, MessageCircle, Shield } from 'lucide-react';
 import { HEROES, roleToSlug } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 type HeroState = { salute: number; flower: number; commentCount: number; saluted: boolean; flowered: boolean };
 type HeroComments = Record<string, string[]>;
 
-export default function HeroDetailPage({ params }: { params: { role: string; unit: string; slug: string } }) {
+export default function HeroDetailPage() {
+  const params = useParams<{ role: string; unit: string; slug: string }>();
+
   const hero = useMemo(
     () => HEROES.find((h) => h.slug === params.slug && h.unitSlug === params.unit && roleToSlug(h.role) === params.role),
     [params.slug, params.unit, params.role]
