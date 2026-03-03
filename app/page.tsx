@@ -3,11 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import {
   ChevronRight,
   Flower2,
-  Globe,
   LogIn,
   MapPin,
   MessageCircle,
@@ -79,8 +79,6 @@ export default function Page() {
         setSearch={setSearch}
         setSettingsOpen={setSettingsOpen}
         username={username}
-        language={language}
-        setLanguage={setLanguage}
       />
 
       <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-10 pt-4 md:grid-cols-[320px_1fr] md:px-6">
@@ -135,16 +133,12 @@ function TopNav({
   search,
   setSearch,
   setSettingsOpen,
-  username,
-  language,
-  setLanguage
+  username
 }: {
   search: string;
   setSearch: (v: string) => void;
   setSettingsOpen: (v: boolean) => void;
   username: string;
-  language: string;
-  setLanguage: (v: string) => void;
 }) {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
@@ -157,22 +151,6 @@ function TopNav({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-1 rounded-lg border border-border px-2 py-1 md:flex">
-            <Globe className="h-4 w-4 text-muted-foreground" />
-            <select className="bg-transparent text-xs outline-none" value={language} onChange={(e) => setLanguage(e.target.value)}>
-              {LANGUAGES.map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
-                </option>
-              ))}
-            </select>
-          </div>
-          <Link href="/auth">
-            <Button size="sm" variant={username ? 'outline' : 'default'}>
-              <LogIn className="h-4 w-4" />
-              {username ? username : 'Login'}
-            </Button>
-          </Link>
           <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)}>
             <Settings className="h-5 w-5" />
           </Button>
@@ -185,16 +163,6 @@ function TopNav({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input className="pl-9" placeholder="Search hero, location or unit..." value={search} onChange={(e) => setSearch(e.target.value)} />
-        </div>
-        <div className="flex items-center gap-1 rounded-lg border border-border px-2 py-1">
-          <Globe className="h-4 w-4 text-muted-foreground" />
-          <select className="w-full bg-transparent text-xs outline-none" value={language} onChange={(e) => setLanguage(e.target.value)}>
-            {LANGUAGES.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
     </header>
@@ -215,8 +183,14 @@ function Logo() {
 
 function HeroListCard({ hero, stats }: { hero: Hero; stats?: HeroState }) {
   const state = stats ?? { salute: 0, flower: 0, commentCount: 0, saluted: false, flowered: false };
+  const router = useRouter();
+
   return (
-    <Link href={heroHref(hero)} className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <button
+      type="button"
+      onClick={() => router.push(heroHref(hero))}
+      className="group w-full overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+    >
       <div className="relative h-44 w-full">
         <Image src={hero.image} alt={hero.name} fill className="object-cover transition group-hover:scale-[1.03]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
@@ -248,7 +222,7 @@ function HeroListCard({ hero, stats }: { hero: Hero; stats?: HeroState }) {
           </span>
         </div>
       </div>
-    </Link>
+    </button>
   );
 }
 
