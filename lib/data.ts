@@ -4,7 +4,7 @@ export type Hero = {
   slug: string;
   role: 'PDF/EAO' | 'Student' | 'CDM' | 'Civilian';
   unit: 'Student Armed Force' | 'Araken Army' | "People's Defend Force - Mandalay";
-  unitSlug: 'student-armed-force' | 'araken-army' | 'peoples-defend-force-mandalay';
+  unitSlug: 'student-armed-force' | 'arakanarmy' | 'peoples-defend-force-mandalay';
   location: string;
   date: string;
   desc: string;
@@ -18,7 +18,7 @@ export const HEROES: Hero[] = [
     slug: 'kyawthu',
     role: 'PDF/EAO',
     unit: 'Araken Army',
-    unitSlug: 'araken-army',
+    unitSlug: 'arakanarmy',
     location: 'Rakhine',
     date: '2021-03-14',
     desc: 'Remembered for his bravery, compassion, and commitment to protecting civilians during conflict.',

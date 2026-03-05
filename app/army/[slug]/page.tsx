@@ -7,7 +7,7 @@ import { ArrowLeft, ExternalLink, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const WIKI_MAP: Record<string, string> = {
-  'araken-army': 'Arakan_Army',
+  'arakanarmy': 'Arakan_Army',
   'student-armed-force': 'Student_army',
   'peoples-defend-force-mandalay': 'People%27s_Defence_Force'
 };

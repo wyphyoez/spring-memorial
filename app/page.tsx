@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { ChevronRight, MapPin, MessageCircle, Search, Settings, Shield, Sun, Moon, User, BadgeCheck, LogIn } from 'lucide-react';
 import { ARMY_FILTERS, HEROES, LANGUAGES, QUOTES, heroHref, type Hero } from '@/lib/data';
@@ -163,13 +162,11 @@ function Logo() {
 
 function HeroListCard({ hero, stats }: { hero: Hero; stats?: HeroState }) {
   const state = stats ?? { salute: 0, flower: 0, commentCount: 0, saluted: false, flowered: false };
-  const router = useRouter();
 
   return (
-    <button
-      type="button"
-      onClick={() => router.push(heroHref(hero))}
-      className="group w-full overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+    <Link
+      href={heroHref(hero)}
+      className="group block w-full overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="relative h-44 w-full">
         <Image src={hero.image} alt={hero.name} fill className="object-cover transition group-hover:scale-[1.03]" />
@@ -202,7 +199,7 @@ function HeroListCard({ hero, stats }: { hero: Hero; stats?: HeroState }) {
           </span>
         </div>
       </div>
-    </button>
+    </Link>
   );
 }
 
