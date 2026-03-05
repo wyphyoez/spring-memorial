@@ -3,7 +3,7 @@ export const LEGACY_USER_STORAGE_KEY = 'spring-memorial-user';
 
 export type AuthUser = {
   identity: string;
-  password: string;
+  accessToken?: string;
 };
 
 export function readAuthUser(): AuthUser | null {
@@ -13,7 +13,7 @@ export function readAuthUser(): AuthUser | null {
   if (raw) {
     try {
       const parsed = JSON.parse(raw) as AuthUser;
-      if (parsed?.identity && parsed?.password) return parsed;
+      if (parsed?.identity) return parsed;
     } catch {
       // ignore malformed persisted value
     }
@@ -21,7 +21,7 @@ export function readAuthUser(): AuthUser | null {
 
   const legacy = localStorage.getItem(LEGACY_USER_STORAGE_KEY);
   if (legacy) {
-    return { identity: legacy, password: '' };
+    return { identity: legacy };
   }
 
   return null;

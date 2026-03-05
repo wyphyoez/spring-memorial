@@ -8,6 +8,7 @@ import { Lock, Mail, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { readAuthUser, writeAuthUser } from '@/lib/auth';
+import { signInWithSupabase } from '@/lib/supabase';
 
 export default function AuthPage() {
   const router = useRouter();
@@ -21,19 +22,23 @@ export default function AuthPage() {
     const existing = readAuthUser();
     if (existing) {
       setIdentity(existing.identity);
-      setPassword(existing.password);
     }
   }, []);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!identity.trim() || !password.trim()) {
       setError('Email/Username and Password are required.');
       return;
     }
 
-    writeAuthUser({ identity: identity.trim(), password: password.trim() });
-    router.push('/');
+    try {
+      const auth = await signInWithSupabase(identity.trim(), password.trim());
+      writeAuthUser({ identity: identity.trim(), accessToken: auth?.access_token });
+      router.push('/');
+    } catch {
+      setError('Supabase auth failed. Check credentials or project config.');
+    }
   };
 
   if (!mounted) return null;

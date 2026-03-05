@@ -2,11 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, CalendarDays, ExternalLink, MapPin, MessageCircle, Shield, UserCircle2 } from 'lucide-react';
-import { HEROES } from '@/lib/data';
 import { readAuthUser } from '@/lib/auth';
+import { fetchHeroComments, fetchSupabaseHeroByRoute, insertHeroComment } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -16,9 +16,20 @@ type HeroComments = Record<string, string[]>;
 export default function HeroDetailPage() {
   const params = useParams<{ unit: string; slug: string }>();
 
-  const hero = useMemo(() => HEROES.find((h) => h.slug === params.slug && h.unitSlug === params.unit), [params.slug, params.unit]);
-
   const [mounted, setMounted] = useState(false);
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  const [hero, setHero] = useState<null | {
+    id: string;
+    name: string;
+    slug: string;
+    role: 'PDF/EAO' | 'Student' | 'CDM' | 'Civilian';
+    unit: string;
+    unitSlug: string;
+    location: string;
+    date: string;
+    desc: string;
+    image: string;
+  }>(null);
   const [heroStats, setHeroStats] = useState<Record<string, HeroState>>({});
   const [comments, setComments] = useState<HeroComments>({});
   const [username, setUsername] = useState('');
@@ -32,7 +43,9 @@ export default function HeroDetailPage() {
     if (savedStats) setHeroStats(JSON.parse(savedStats));
     if (savedComments) setComments(JSON.parse(savedComments));
     if (savedUser) setUsername(savedUser);
-  }, []);
+
+    fetchSupabaseHeroByRoute(params.unit, params.slug).then((row) => { setHero(row); setHeroLoaded(true); });
+  }, [params.slug, params.unit]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -44,10 +57,19 @@ export default function HeroDetailPage() {
     localStorage.setItem('spring-memorial-comments', JSON.stringify(comments));
   }, [comments, mounted]);
 
+
+  useEffect(() => {
+    if (!hero) return;
+    fetchHeroComments(hero.id)
+      .then((rows) => {
+        if (rows) setComments((prev) => ({ ...prev, [hero.id]: rows }));
+      })
+      .catch(() => undefined);
+  }, [hero]);
   if (!hero) {
     return (
       <main className="mx-auto max-w-3xl p-6">
-        <p className="mb-4">Hero not found.</p>
+        <p className="mb-4">{heroLoaded ? 'Hero not found.' : 'Loading hero details...'}</p>
         <Link href="/">
           <Button>Back Home</Button>
         </Link>
@@ -174,6 +196,7 @@ export default function HeroDetailPage() {
                     if (!text.trim()) return;
                     const newComment = `${username}: ${text.trim()}`;
                     setComments((prev) => ({ ...prev, [hero.id]: [...(prev[hero.id] ?? []), newComment] }));
+                    insertHeroComment(hero.id, username, text.trim()).catch(() => undefined);
                     setHeroStats((prev) => {
                       const current = prev[hero.id] ?? state;
                       return { ...prev, [hero.id]: { ...current, commentCount: current.commentCount + 1 } };
