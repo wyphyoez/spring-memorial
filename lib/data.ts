@@ -3,8 +3,8 @@ export type Hero = {
   name: string;
   slug: string;
   role: 'PDF/EAO' | 'Student' | 'CDM' | 'Civilian';
-  unit: string;
-  unitSlug: string;
+  unit: 'Student Armed Force' | 'Araken Army' | "People's Defend Force - Mandalay";
+  unitSlug: 'student-armed-force' | 'araken-army' | 'peoples-defend-force-mandalay';
   location: string;
   date: string;
   desc: string;
@@ -17,8 +17,8 @@ export const HEROES: Hero[] = [
     name: 'Kyaw Thu',
     slug: 'kyawthu',
     role: 'PDF/EAO',
-    unit: 'Arakan Army',
-    unitSlug: 'arakanarmy',
+    unit: 'Araken Army',
+    unitSlug: 'araken-army',
     location: 'Rakhine',
     date: '2021-03-14',
     desc: 'Remembered for his bravery, compassion, and commitment to protecting civilians during conflict.',
@@ -28,9 +28,9 @@ export const HEROES: Hero[] = [
     id: '2',
     name: 'Naw Kyae Phaw',
     slug: 'naw-kyae-phaw',
-    role: 'PDF/EAO',
-    unit: 'Karen Frontline Unit 3',
-    unitSlug: 'karen-frontline-unit-3',
+    role: 'Student',
+    unit: 'Student Armed Force',
+    unitSlug: 'student-armed-force',
     location: 'Hpa-An',
     date: '2022-07-09',
     desc: 'Served bravely on the frontline and helped evacuate families in danger.',
@@ -40,12 +40,12 @@ export const HEROES: Hero[] = [
     id: '3',
     name: 'Min Thant Zin',
     slug: 'min-thant-zin',
-    role: 'CDM',
-    unit: 'Mandalay General Hospital',
-    unitSlug: 'mandalay-general-hospital',
+    role: 'PDF/EAO',
+    unit: "People's Defend Force - Mandalay",
+    unitSlug: 'peoples-defend-force-mandalay',
     location: 'Mandalay',
     date: '2021-09-21',
-    desc: 'A doctor who joined the Civil Disobedience Movement and provided care in secret clinics.',
+    desc: 'A doctor who joined the movement and continued to support communities with emergency care.',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80'
   },
   {
@@ -53,14 +53,16 @@ export const HEROES: Hero[] = [
     name: 'Thiri Win',
     slug: 'thiri-win',
     role: 'Civilian',
-    unit: 'Community Volunteer Network',
-    unitSlug: 'community-volunteer-network',
+    unit: 'Student Armed Force',
+    unitSlug: 'student-armed-force',
     location: 'Sagaing',
     date: '2022-11-03',
     desc: 'A humanitarian volunteer who distributed food and medicine to displaced families.',
     image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80'
   }
 ];
+
+export const ARMY_FILTERS = ['All', 'Student Armed Force', 'Araken Army', "People's Defend Force - Mandalay"] as const;
 
 export const QUOTES = [
   'Their sacrifice planted the seeds of freedom in our hearts.',

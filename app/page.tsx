@@ -5,21 +5,8 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import {
-  ChevronRight,
-  Flower2,
-  LogIn,
-  MapPin,
-  MessageCircle,
-  Search,
-  Settings,
-  Shield,
-  Sun,
-  Moon,
-  User,
-  BadgeCheck
-} from 'lucide-react';
-import { HEROES, LANGUAGES, QUOTES, heroHref, type Hero } from '@/lib/data';
+import { ChevronRight, MapPin, MessageCircle, Search, Settings, Shield, Sun, Moon, User, BadgeCheck, LogIn } from 'lucide-react';
+import { ARMY_FILTERS, HEROES, LANGUAGES, QUOTES, heroHref, type Hero } from '@/lib/data';
 import { clearAuthUser, readAuthUser } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,12 +16,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 
 type HeroState = { salute: number; flower: number; commentCount: number; saluted: boolean; flowered: boolean };
 
-const roleFilters = ['All', 'PDF/EAO', 'Student', 'CDM', 'Civilian'] as const;
-
 export default function Page() {
   const [mounted, setMounted] = useState(false);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<(typeof roleFilters)[number]>('All');
+  const [filter, setFilter] = useState<(typeof ARMY_FILTERS)[number]>('All');
   const [quote, setQuote] = useState('');
   const [heroStats, setHeroStats] = useState<Record<string, HeroState>>({});
   const [username, setUsername] = useState('');
@@ -65,7 +50,7 @@ export default function Page() {
   const filteredHeroes = useMemo(() => {
     return HEROES.filter((hero) => {
       const bySearch = [hero.name, hero.location, hero.unit].join(' ').toLowerCase().includes(search.toLowerCase());
-      const byFilter = filter === 'All' || hero.role === filter;
+      const byFilter = filter === 'All' || hero.unit === filter;
       return bySearch && byFilter;
     });
   }, [search, filter]);
@@ -74,12 +59,7 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background">
-      <TopNav
-        search={search}
-        setSearch={setSearch}
-        setSettingsOpen={setSettingsOpen}
-        username={username}
-      />
+      <TopNav search={search} setSearch={setSearch} setSettingsOpen={setSettingsOpen} username={username} />
 
       <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-10 pt-4 md:grid-cols-[320px_1fr] md:px-6">
         <aside className="space-y-4 md:sticky md:top-20 md:self-start">
@@ -89,11 +69,11 @@ export default function Page() {
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-4">
-            <p className="mb-2 text-sm font-semibold">Filter by Role</p>
+            <p className="mb-2 text-sm font-semibold">Filter by Army</p>
             <div className="flex flex-wrap gap-2">
-              {roleFilters.map((role) => (
-                <Button key={role} variant={filter === role ? 'default' : 'outline'} size="sm" onClick={() => setFilter(role)}>
-                  {role}
+              {ARMY_FILTERS.map((army) => (
+                <Button key={army} variant={filter === army ? 'default' : 'outline'} size="sm" onClick={() => setFilter(army)}>
+                  {army}
                 </Button>
               ))}
             </div>
@@ -172,7 +152,7 @@ function TopNav({
 function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <Flower2 className="h-8 w-8 text-primary" />
+      <Image src="/icon.svg" alt="Spring Memorial Logo" width={32} height={32} className="h-8 w-8" />
       <div>
         <p className="text-base font-bold leading-none md:text-lg">Spring Memorial</p>
         <p className="text-[9px] tracking-widest text-muted-foreground">IN MEMORY</p>

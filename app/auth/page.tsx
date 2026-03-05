@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
-import { Flower2, Lock, Mail, User } from 'lucide-react';
+import Image from 'next/image';
+import { Lock, Mail, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { readAuthUser, writeAuthUser } from '@/lib/auth';
@@ -41,7 +42,7 @@ export default function AuthPage() {
     <main className="min-h-screen bg-gradient-to-b from-primary/10 via-background to-background px-4 py-8">
       <section className="mx-auto w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-sm">
         <div className="mb-6 flex items-center justify-center gap-2 text-primary">
-          <Flower2 className="h-7 w-7" />
+          <Image src="/icon.svg" alt="Spring Memorial Logo" width={28} height={28} className="h-7 w-7" />
           <div>
             <p className="text-lg font-bold leading-none">Spring Memorial</p>
             <p className="text-[10px] tracking-widest text-muted-foreground">IN MEMORY</p>

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, CalendarDays, Flower2, MapPin, MessageCircle, Shield, UserCircle2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ExternalLink, MapPin, MessageCircle, Shield, UserCircle2 } from 'lucide-react';
 import { HEROES } from '@/lib/data';
 import { readAuthUser } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -66,15 +66,12 @@ export default function HeroDetailPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div className="flex items-center gap-2 text-primary">
-            <Flower2 className="h-5 w-5" />
-            <p className="text-xs tracking-[0.2em]">IN MEMORY</p>
-          </div>
+          <Image src="/icon.svg" alt="Spring Memorial Logo" width={28} height={28} className="h-7 w-7" />
         </div>
 
         <article className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
           <div className="grid md:grid-cols-[1.1fr_1fr]">
-            <div className="relative h-64 md:h-full min-h-80">
+            <div className="relative h-64 min-h-80 md:h-full">
               <Image src={hero.image} alt={hero.name} fill className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent md:bg-gradient-to-r" />
               <div className="absolute bottom-0 w-full p-5 text-white">
@@ -97,6 +94,13 @@ export default function HeroDetailPage() {
                   <CalendarDays className="h-4 w-4" /> Date: {hero.date}
                 </p>
               </div>
+
+              <Link href={`/army/${hero.unitSlug}`} className="inline-flex">
+                <Button variant="outline">
+                  <ExternalLink className="h-4 w-4" />
+                  Army Details (Wikipedia)
+                </Button>
+              </Link>
 
               <div className="flex flex-wrap gap-2 pt-1">
                 <Button
